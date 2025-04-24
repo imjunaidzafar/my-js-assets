@@ -1,7 +1,7 @@
-(function() {
+(function () {
     const currentScript = document.currentScript;
     const siteId = currentScript ? currentScript.getAttribute('data-site-id') : null;
-    
+
     if (!siteId) {
         console.error("No site ID provided in the script tag.");
         return;
@@ -25,7 +25,7 @@
     let pageViews = parseInt(sessionStorage.getItem('page_views') || '0');
     let sessionStartTime = sessionStorage.getItem('session_start_time');
     let isContactPage = window.location.href.includes('/contact');
-    
+
     // Initialize session if it doesn't exist
     if (!sessionId) {
         sessionId = 'session-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
@@ -35,12 +35,12 @@
         sessionStorage.setItem('session_start_time', sessionStartTime);
         sessionStorage.setItem('page_views', '0');
     }
-    
+
     // Increment page views - this counts how many pages the user has viewed in this session
     // This data is sent to the tracking API to analyze user engagement
     pageViews++;
     sessionStorage.setItem('page_views', pageViews.toString());
-    
+
     // Calculate session duration in minutes
     const sessionDuration = sessionStartTime ? (Date.now() - parseInt(sessionStartTime)) / 60000 : 0;
 
@@ -49,7 +49,7 @@
         .then(response => response.json())
         .then(data => {
             const trackingData = {
-                siteId: siteId,        
+                siteId: siteId,
                 uuid: userId,
                 sessionId: sessionId,
                 url: window.location.href,
@@ -69,14 +69,14 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(trackingData)
             })
-            .then(response => response.json())
-            .then(data => {
-                // Store the tracking object ID for future updates
-                if (data && data.trackingId) {
-                    sessionStorage.setItem('tracking_id', data.trackingId);
-                }
-                return data;
-            });
+                .then(response => response.json())
+                .then(data => {
+                    // Store the tracking object ID for future updates
+                    if (data && data.trackingId) {
+                        sessionStorage.setItem('tracking_id', data.trackingId);
+                    }
+                    return data;
+                });
         })
         .then(initialData => {
             // If this is a contact page, send additional conversion data
@@ -88,7 +88,7 @@
                         conversionType: 'contact_page_visit',
                         timestamp: new Date().toISOString()
                     };
-                    
+
                     return fetch("https://c393-172-104-52-180.ngrok-free.app/api/track/conversion", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -98,9 +98,9 @@
             }
         })
         .catch(err => console.error("Tracking request failed:", err));
-        
+
     // Add event listener for page visibility changes to update session metrics
-    document.addEventListener('visibilitychange', function() {
+    document.addEventListener('visibilitychange', function () {
         if (document.visibilityState === 'hidden') {
             const trackingId = sessionStorage.getItem('tracking_id');
             if (trackingId) {
@@ -109,10 +109,10 @@
                     sessionDuration: (Date.now() - parseInt(sessionStorage.getItem('session_start_time') || '0')) / 60000,
                     pageViews: parseInt(sessionStorage.getItem('page_views') || '0')
                 };
-                
+
                 // Use sendBeacon for more reliable data sending when page is unloading
                 navigator.sendBeacon(
-                    "https://c393-172-104-52-180.ngrok-free.app/api/track/update-session", 
+                    "https://c393-172-104-52-180.ngrok-free.app/api/track/update-session",
                     JSON.stringify(sessionUpdateData)
                 );
             }
