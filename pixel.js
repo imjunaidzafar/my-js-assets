@@ -66,7 +66,7 @@
       };
 
       // Initial tracking call - creates or updates the session object
-      return fetch("https://528d-39-63-38-4.ngrok-free.app/api/track", {
+      return fetch("https://c06c-39-63-38-4.ngrok-free.app/api/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(trackingData)
@@ -91,7 +91,7 @@
             timestamp: new Date().toISOString()
           };
 
-          return fetch("https://528d-39-63-38-4.ngrok-free.app/api/track/conversion", {
+          return fetch("https://c06c-39-63-38-4.ngrok-free.app/api/track/conversion", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(conversionData)
@@ -114,7 +114,7 @@
 
         // Use sendBeacon for more reliable data sending when page is unloading
         navigator.sendBeacon(
-          "https://528d-39-63-38-4.ngrok-free.app/api/track/update-session",
+          "https://c06c-39-63-38-4.ngrok-free.app/api/track/update-session",
           JSON.stringify(sessionUpdateData)
         );
       }
