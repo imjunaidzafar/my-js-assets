@@ -1,6 +1,5 @@
 (function () {
   const currentScript = document.currentScript;
-  console.log(`current`, currentScript)
   const siteId = currentScript ? currentScript.getAttribute('data-site-id') : null;
 
   if (!siteId) {
@@ -104,6 +103,8 @@
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'hidden') {
       const trackingId = sessionStorage.getItem('tracking_id');
+      console.log(`sessionStorage`,sessionStorage)
+      console.log(`trackingID`, trackingId)
       if (trackingId) {
         const sessionUpdateData = {
           trackingId: trackingId,
