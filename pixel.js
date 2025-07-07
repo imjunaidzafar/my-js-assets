@@ -1,5 +1,6 @@
 (function () {
   const currentScript = document.currentScript;
+  console.log(`current`, currentScript)
   const siteId = currentScript ? currentScript.getAttribute('data-site-id') : null;
 
   if (!siteId) {
