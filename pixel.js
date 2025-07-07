@@ -25,6 +25,7 @@
   let pageViews = parseInt(sessionStorage.getItem('page_views') || '0');
   let sessionStartTime = sessionStorage.getItem('session_start_time');
   let isContactPage = window.location.href.includes('/contact');
+  let trackingId = sessionStorage.getItem('tracking_id')
 
   // Initialize session if it doesn't exist
   if (!sessionId) {
@@ -60,7 +61,8 @@
         isNewSession: isNewSession,  // boolean
         pageViews: pageViews,        // number
         sessionDuration: sessionDuration,  // number (minutes)
-        isContactPage: isContactPage  // boolean
+        isContactPage: isContactPage,  // boolean
+        trackingId: trackingId
       };
 
       // Initial tracking call - creates or updates the session object
@@ -103,8 +105,6 @@
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'hidden') {
       const trackingId = sessionStorage.getItem('tracking_id');
-      console.log(`sessionStorage`,sessionStorage)
-      console.log(`trackingID`, trackingId)
       if (trackingId) {
         const sessionUpdateData = {
           trackingId: trackingId,
