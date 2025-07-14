@@ -35,12 +35,22 @@
     sessionStorage.setItem('session_id', sessionId);
     sessionStorage.setItem('session_start_time', sessionStartTime);
     sessionStorage.setItem('page_views', '0');
+    sessionStorage.setItem('visited_pages', JSON.stringify([]));
   }
 
   // Increment page views - this counts how many pages the user has viewed in this session
   // This data is sent to the tracking API to analyze user engagement
   pageViews++;
   sessionStorage.setItem('page_views', pageViews.toString());
+
+  // Track visited pages
+  let visitedPages = JSON.parse(sessionStorage.getItem('visited_pages') || '[]');
+  visitedPages.push({
+    url: window.location.href,
+    timestamp: new Date().toISOString()
+  });
+  sessionStorage.setItem('visited_pages', JSON.stringify(visitedPages));
+
 
   // Calculate session duration in minutes
   const sessionDuration = sessionStartTime ? (Date.now() - parseInt(sessionStartTime)) / 60000 : 0;
@@ -62,6 +72,7 @@
         pageViews: pageViews,        // number
         sessionDuration: sessionDuration,  // number (minutes)
         isContactPage: isContactPage,  // boolean
+        visitedPages: visitedPages,
         trackingId: trackingId
       };
 
@@ -80,25 +91,6 @@
           return data;
         });
     })
-    .then(initialData => {
-      // If this is a contact page, send additional conversion data
-      if (isContactPage) {
-        const trackingId = sessionStorage.getItem('tracking_id');
-        if (trackingId) {
-          const conversionData = {
-            trackingId: trackingId,
-            conversionType: 'contact_page_visit',
-            timestamp: new Date().toISOString()
-          };
-
-          return fetch("https://c06c-39-63-38-4.ngrok-free.app/api/track/conversion", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(conversionData)
-          });
-        }
-      }
-    })
     .catch(err => console.error("Tracking request failed:", err));
 
   // Add event listener for page visibility changes to update session metrics
@@ -109,7 +101,8 @@
         const sessionUpdateData = {
           trackingId: trackingId,
           sessionDuration: (Date.now() - parseInt(sessionStorage.getItem('session_start_time') || '0')) / 60000,
-          pageViews: parseInt(sessionStorage.getItem('page_views') || '0')
+          pageViews: parseInt(sessionStorage.getItem('page_views') || '0'),
+          visitedPages: JSON.parse(sessionStorage.getItem('visited_pages') || '[]')
         };
 
         // Use sendBeacon for more reliable data sending when page is unloading
