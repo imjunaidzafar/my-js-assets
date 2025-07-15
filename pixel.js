@@ -69,7 +69,7 @@
             trackingId
           };
 
-          return fetch("https://2f376f1fae13.ngrok-free.app/api/track", {
+          return fetch("https://apistaging.success.ai/api/track", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(trackingData)
@@ -112,7 +112,7 @@
           pageViews: parseInt(sessionStorage.getItem('page_views') || '0'),
           visitedPages: JSON.parse(sessionStorage.getItem('visited_pages') || '[]')
         };
-        navigator.sendBeacon("https://2f376f1fae13.ngrok-free.app/api/track/update-session", JSON.stringify(sessionUpdateData));
+        navigator.sendBeacon("https://apistaging.success.ai/api/track/update-session", JSON.stringify(sessionUpdateData));
       }
     }
   });
